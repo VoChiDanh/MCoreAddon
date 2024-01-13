@@ -1,0 +1,13 @@
+name: MCoreAddon
+version: '${project.version}'
+main: net.danh.mcoreaddon.MCoreAddon
+api-version: 1.13
+author: VoChiDanh
+description: Addon for MMOCore
+depend:
+  - MythicMobs
+  - MythicLib
+  - MMOCore
+commands:
+  MCoreA:
+    description: MCA CMD

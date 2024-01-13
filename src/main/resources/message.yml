@@ -1,0 +1,10 @@
+admin:
+  reload: "&aReload Files"
+  player_is_null: "&cPlayer is not online or never join"
+  booster:
+    above_zero: "&cBooster multi must be above 0!"
+    add_booster: "&aBooster <multi> was add to <player>"
+user:
+  booster:
+    active_booster: "&aBooster x<multi> was activated"
+    no_booster: "&cYou don't have any booster!"

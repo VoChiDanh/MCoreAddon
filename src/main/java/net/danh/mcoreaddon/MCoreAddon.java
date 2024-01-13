@@ -1,0 +1,38 @@
+package net.danh.mcoreaddon;
+
+import net.danh.mcoreaddon.cmd.MCA_CMD;
+import net.danh.mcoreaddon.events.JoinQuit;
+import net.danh.mcoreaddon.mythicdrop.MythicReg;
+import net.danh.mcoreaddon.utils.Files;
+import net.xconfig.bukkit.model.SimpleConfigurationManager;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Arrays;
+
+public final class MCoreAddon extends JavaPlugin {
+
+    private static MCoreAddon mCoreAddon;
+
+    public static MCoreAddon getMCore() {
+        return mCoreAddon;
+    }
+
+    @Override
+    public void onEnable() {
+        mCoreAddon = this;
+        SimpleConfigurationManager.register(mCoreAddon);
+        registerEvents(new JoinQuit(), new MythicReg());
+        Files.createFiles();
+        new MCA_CMD();
+    }
+
+    @Override
+    public void onDisable() {
+        Files.saveFile();
+    }
+
+    private void registerEvents(Listener... listeners) {
+        Arrays.asList(listeners).forEach(listener -> getServer().getPluginManager().registerEvents(listener, mCoreAddon));
+    }
+}
