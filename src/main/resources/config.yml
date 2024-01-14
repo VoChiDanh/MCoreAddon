@@ -3,3 +3,19 @@ version: 1
 
 # Plugin prefix
 prefix: "&f[&e MCore&f ]"
+
+# Times for showing booster
+times:
+  day: "day(s)"
+  hour: "hour(s)"
+  minute: "minute(s)"
+  second: "second(s)"
+
+# Booster options
+booster:
+  # Mode list: Notes: Permanently booster = p | Temporary booster = b | Booster multi must be higher than 1 to be active
+  # div : player will be get xp from mob: xp * ((p + b) / 2) | If b = 1 -> xp = xp * p
+  # plus : player will be get xp from mob: xp * (p + b) | If b = 1 -> xp = xp * p
+  # add : player will be get xp from mob: xp * p + xp * b | If b = 1 -> xp = xp * p
+  # higher: player will be get xp from mob: xp * max(p,b) | max(p,b) -> which is higher, that's multi | If b = 1 -> xp = xp * p
+  mode: plus

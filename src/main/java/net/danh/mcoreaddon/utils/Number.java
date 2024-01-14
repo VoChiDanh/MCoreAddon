@@ -1,8 +1,11 @@
 package net.danh.mcoreaddon.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 public class Number {
 
@@ -110,5 +113,27 @@ public class Number {
         }
     }
 
+
+    public static @NotNull String getTime(int secondsx) {
+        int days = (int) TimeUnit.SECONDS.toDays(secondsx);
+        int hours = (int) (TimeUnit.SECONDS.toHours(secondsx) - TimeUnit.DAYS.toHours(days));
+        int minutes = (int) (TimeUnit.SECONDS.toMinutes(secondsx) - TimeUnit.HOURS.toMinutes(hours) - TimeUnit.DAYS.toMinutes(days));
+        int seconds = (int) (TimeUnit.SECONDS.toSeconds(secondsx) - TimeUnit.MINUTES.toSeconds(minutes) - TimeUnit.HOURS.toSeconds(hours) - TimeUnit.DAYS.toSeconds(days));
+
+        if (days != 0) {
+            return days + " " + Files.getConfig().getString("times.day") + " " + hours + " " + Files.getConfig().getString("times.hour") + " " + minutes + " " + Files.getConfig().getString("times.minute") + " " + seconds + " " + Files.getConfig().getString("times.second");
+        } else {
+            if (hours != 0) {
+                return hours + " " + Files.getConfig().getString("times.hour") + " " + minutes + " " + Files.getConfig().getString("times.minute") + " " + seconds + " " + Files.getConfig().getString("times.second");
+            } else {
+                if (minutes != 0) {
+                    return minutes + " " + Files.getConfig().getString("times.minute") + " " + seconds + " " + Files.getConfig().getString("times.second");
+                } else {
+                    return seconds + " " + Files.getConfig().getString("times.second");
+                }
+            }
+
+        }
+    }
 
 }

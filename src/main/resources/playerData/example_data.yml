@@ -1,2 +1,6 @@
 name: Example123
-booster: 1.0
+booster:
+  permanently: 1.0
+  temporary:
+    times: 0
+    multi: 1.0

@@ -4,7 +4,19 @@ admin:
   booster:
     above_zero: "&cBooster multi must be above 0!"
     add_booster: "&aBooster <multi> was add to <player>"
+  help:
+    - "&6/MCoreA reload - Reload Files"
+    - "&6/MCoreA booster <player> <multi> - Create Permanently Booster For Player"
+    - "&6/MCoreA booster <player> <multi> <minutes> - Create Temporary Booster For Player"
 user:
+  help:
+    - "&e/MCoreA booster - Check Booster Information"
   booster:
-    active_booster: "&aBooster x<multi> was activated"
+    active_booster:
+      - "&aBooster of <player>: "
+      - "&b   * Permanently: x<p_multi>"
+      - "&e   * Temporary "
+      - "&e      * Multi: x<t_multi>"
+      - "&e      * Times: <t_times>"
     no_booster: "&cYou don't have any booster!"
+    expired_booster: "Booster x<t_multi> has expired!"
