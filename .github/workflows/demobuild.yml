@@ -1,4 +1,4 @@
-name: DevBuild
+name: DemoBuild
 on:
   push:
     branches: [ master ]
