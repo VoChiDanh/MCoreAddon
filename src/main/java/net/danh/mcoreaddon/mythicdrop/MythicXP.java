@@ -97,8 +97,6 @@ public class MythicXP implements ILocationDrop {
                 } else {
                     PlayerData.get(p.getUniqueId()).giveExperience(xp, EXPSource.SOURCE);
                 }
-            } else {
-                PlayerData.get(p.getUniqueId()).giveExperience(xp, EXPSource.SOURCE);
             }
         }
     }
