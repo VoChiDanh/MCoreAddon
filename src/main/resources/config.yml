@@ -12,10 +12,12 @@ times:
   second: "second(s)"
 
 # Booster options
+# <xp> -> xp mob drops
+# <p_multi> -> permanently multi
+# <t_multi> -> temporary multi
+# mode.all -> When permanently & temporary booster have multi > 1
+# mode.permanently -> When permanently booster has multi > 1, temporary booster hasn't active
 booster:
-  # Mode list: Notes: Permanently booster = p | Temporary booster = b | Booster multi must be higher than 1 to be active
-  # div : player will be get xp from mob: xp * ((p + b) / 2) | If b = 1 -> xp = xp * p
-  # plus : player will be get xp from mob: xp * (p + b) | If b = 1 -> xp = xp * p
-  # add : player will be get xp from mob: xp * p + xp * b | If b = 1 -> xp = xp * p
-  # higher: player will be get xp from mob: xp * max(p,b) | max(p,b) -> which is higher, that's multi | If b = 1 -> xp = xp * p
-  mode: plus
+  mode:
+    all: "<xp> * ( (<p_multi> + <t_multi>) / 2 )"
+    permanently: "<xp> * <p_multi>"

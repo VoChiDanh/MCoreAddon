@@ -5,17 +5,16 @@ import io.lumine.mythic.api.adapters.AbstractLocation;
 import io.lumine.mythic.api.config.MythicLineConfig;
 import io.lumine.mythic.api.drops.DropMetadata;
 import io.lumine.mythic.api.drops.ILocationDrop;
+import io.lumine.mythic.api.skills.SkillCaster;
 import net.Indyuce.mmocore.api.player.PlayerData;
 import net.Indyuce.mmocore.experience.EXPSource;
-import net.danh.mcoreaddon.listener.PlayerExperienceGainBoosterEvent;
-import net.danh.mcoreaddon.utils.Files;
+import net.danh.mcoreaddon.booster.Boosters;
 import net.danh.mcoreaddon.utils.Number;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Optional;
 
 public class MythicXP implements ILocationDrop {
@@ -23,79 +22,25 @@ public class MythicXP implements ILocationDrop {
     public static HashMap<Player, Double> booster = new HashMap<>();
     public static HashMap<Player, Integer> booster_temporary_times = new HashMap<>();
     public static HashMap<Player, Double> booster_temporary_multi = new HashMap<>();
-    protected final double xp;
+    protected final int xp;
     protected final String range;
 
     public MythicXP(MythicLineConfig config) {
-        xp = config.getDouble(new String[]{"mmocore-xp", "xp"}, 0d);
+        xp = config.getInteger(new String[]{"mmocore-xp", "xp"}, 1);
         range = config.getString(new String[]{"range", "r"}, null);
     }
 
-    public void exp(Player p) {
-        if (xp > 0d) {
+    public void exp(Player p, Location location) {
+        if (xp > 0) {
             if (rangeCheck(p)) {
                 if (booster.containsKey(p)) {
                     if (booster.get(p) > 1d) {
-                        switch (getBoosterMode()) {
-                            case PLUS -> {
-                                if (booster_temporary_multi.get(p) > 1d) {
-                                    double exp = Double.parseDouble(new DecimalFormat("#.##").format(xp * (booster.get(p) + booster_temporary_multi.get(p))).replace(",", "."));
-                                    PlayerData.get(p).giveExperience(exp, EXPSource.SOURCE);
-                                    PlayerExperienceGainBoosterEvent event = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), exp, EXPSource.SOURCE);
-                                    Bukkit.getPluginManager().callEvent(event);
-                                } else {
-                                    double exp = Double.parseDouble(new DecimalFormat("#.##").format(xp * booster.get(p)).replace(",", "."));
-                                    PlayerData.get(p).giveExperience(exp, EXPSource.SOURCE);
-                                    PlayerExperienceGainBoosterEvent event = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), exp, EXPSource.SOURCE);
-                                    Bukkit.getPluginManager().callEvent(event);
-                                }
-                            }
-                            case ADD -> {
-                                if (booster_temporary_multi.get(p) > 1d) {
-                                    double exp = Double.parseDouble(new DecimalFormat("#.##").format(xp * booster.get(p) + xp * booster_temporary_multi.get(p)).replace(",", "."));
-                                    PlayerData.get(p).giveExperience(exp, EXPSource.SOURCE);
-                                    PlayerExperienceGainBoosterEvent event = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), exp, EXPSource.SOURCE);
-                                    Bukkit.getPluginManager().callEvent(event);
-                                } else {
-                                    double exp = Double.parseDouble(new DecimalFormat("#.##").format(xp * booster.get(p)).replace(",", "."));
-                                    PlayerData.get(p).giveExperience(exp, EXPSource.SOURCE);
-                                    PlayerExperienceGainBoosterEvent event = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), exp, EXPSource.SOURCE);
-                                    Bukkit.getPluginManager().callEvent(event);
-                                }
-                            }
-                            case HIGHER -> {
-                                if (booster_temporary_multi.get(p) > 1d) {
-                                    double exp = Double.parseDouble(new DecimalFormat("#.##").format(xp * Math.max(booster.get(p), booster_temporary_multi.get(p))).replace(",", "."));
-                                    PlayerData.get(p).giveExperience(exp, EXPSource.SOURCE);
-                                    PlayerExperienceGainBoosterEvent event = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), exp, EXPSource.SOURCE);
-                                    Bukkit.getPluginManager().callEvent(event);
-                                } else {
-                                    double exp = Double.parseDouble(new DecimalFormat("#.##").format(xp * booster.get(p)).replace(",", "."));
-                                    PlayerData.get(p).giveExperience(exp, EXPSource.SOURCE);
-                                    PlayerExperienceGainBoosterEvent event = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), exp, EXPSource.SOURCE);
-                                    Bukkit.getPluginManager().callEvent(event);
-                                }
-                            }
-                            case DIV -> {
-                                if (booster_temporary_multi.get(p) > 1d) {
-                                    double exp = xp * Double.parseDouble(new DecimalFormat("#.##").format((booster.get(p) + booster_temporary_multi.get(p)) / 2).replace(",", "."));
-                                    PlayerData.get(p).giveExperience(exp, EXPSource.SOURCE);
-                                    PlayerExperienceGainBoosterEvent event = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), exp, EXPSource.SOURCE);
-                                    Bukkit.getPluginManager().callEvent(event);
-                                } else {
-                                    double exp = Double.parseDouble(new DecimalFormat("#.##").format(xp * booster.get(p)).replace(",", "."));
-                                    PlayerData.get(p).giveExperience(exp, EXPSource.SOURCE);
-                                    PlayerExperienceGainBoosterEvent event = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), exp, EXPSource.SOURCE);
-                                    Bukkit.getPluginManager().callEvent(event);
-                                }
-                            }
-                            default -> throw new IllegalStateException("Unexpected value mode: " + getBoosterMode());
-                        }
+                        Boosters.giveExp(p, xp, location);
                     } else {
-                        PlayerData.get(p.getUniqueId()).giveExperience(xp, EXPSource.SOURCE);
+                        PlayerData.get(p.getUniqueId()).giveExperience(xp, EXPSource.SOURCE, location.add(0, 1.5, 0), true);
                     }
                 } else {
-                    PlayerData.get(p.getUniqueId()).giveExperience(xp, EXPSource.SOURCE);
+                    PlayerData.get(p.getUniqueId()).giveExperience(xp, EXPSource.SOURCE, location.add(0, 1.5, 0), true);
                 }
             }
         }
@@ -131,24 +76,13 @@ public class MythicXP implements ILocationDrop {
     @Override
     public void drop(AbstractLocation abstractLocation, DropMetadata dropMetadata, double v) {
         Optional<AbstractEntity> abstractEntity = dropMetadata.getCause();
-        if (abstractEntity.isPresent()) {
+        Optional<SkillCaster> skillCaster = dropMetadata.getDropper();
+        if (abstractEntity.isPresent() && skillCaster.isPresent()) {
             Player p = Bukkit.getPlayer(abstractEntity.get().getName());
+            Location location = new Location(Bukkit.getWorld(skillCaster.get().getLocation().getWorld().getName()), skillCaster.get().getLocation().getBlockX(), skillCaster.get().getLocation().getBlockY(), skillCaster.get().getLocation().getBlockZ());
             if (p != null) {
-                exp(p);
+                exp(p, location);
             }
         }
-    }
-
-    public BoosterMode getBoosterMode() {
-        return switch (Objects.requireNonNull(Files.getConfig().getString("booster.mode"))) {
-            case "div", "DIV" -> BoosterMode.DIV;
-            case "add", "ADD" -> BoosterMode.ADD;
-            case "higher", "HIGHER" -> BoosterMode.HIGHER;
-            default -> BoosterMode.PLUS;
-        };
-    }
-
-    public enum BoosterMode {
-        DIV, PLUS, ADD, HIGHER
     }
 }

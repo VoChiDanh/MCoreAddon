@@ -1,7 +1,7 @@
 package net.danh.mcoreaddon.cmd;
 
 import net.danh.mcoreaddon.MCoreAddon;
-import net.danh.mcoreaddon.api.CMDBase;
+import net.danh.mcoreaddon.api.cmd.CMDBase;
 import net.danh.mcoreaddon.mythicdrop.MythicXP;
 import net.danh.mcoreaddon.utils.ColorUtils;
 import net.danh.mcoreaddon.utils.Files;

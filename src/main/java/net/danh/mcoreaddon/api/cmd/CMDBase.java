@@ -1,4 +1,4 @@
-package net.danh.mcoreaddon.api;
+package net.danh.mcoreaddon.api.cmd;
 
 import net.danh.mcoreaddon.MCoreAddon;
 import org.bukkit.command.*;
