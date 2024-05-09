@@ -6,6 +6,7 @@ import io.lumine.mythic.api.config.MythicLineConfig;
 import io.lumine.mythic.api.drops.DropMetadata;
 import io.lumine.mythic.api.drops.ILocationDrop;
 import io.lumine.mythic.api.skills.SkillCaster;
+import net.Indyuce.mmocore.MMOCore;
 import net.Indyuce.mmocore.api.player.PlayerData;
 import net.Indyuce.mmocore.experience.EXPSource;
 import net.danh.mcoreaddon.booster.Boosters;
@@ -18,36 +19,40 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Optional;
 
-public class MythicXP implements ILocationDrop {
+public class MythicProfession implements ILocationDrop {
 
-    public static HashMap<Player, Double> booster = new HashMap<>();
-    public static HashMap<Player, Integer> booster_temporary_times = new HashMap<>();
-    public static HashMap<Player, Double> booster_temporary_multi = new HashMap<>();
+    public static HashMap<String, Double> booster_profession = new HashMap<>();
+    public static HashMap<String, Integer> booster_temporary_times_profession = new HashMap<>();
+    public static HashMap<String, Double> booster_temporary_multi_profession = new HashMap<>();
     protected final int xp;
+    protected final String profession;
     protected final String range;
 
-    public MythicXP(MythicLineConfig config) {
-        xp = config.getInteger(new String[]{"mmocore-xp", "xp"}, 1);
+    public MythicProfession(MythicLineConfig config) {
+        xp = config.getInteger(new String[]{"profession-xp", "pxp"}, 1);
+        profession = config.getString(new String[]{"profession", "p"}, null);
         range = config.getString(new String[]{"range", "r"}, null);
     }
 
     public void exp(Player p, Location location) {
         if (xp > 0) {
             if (rangeCheck(p)) {
-                if (booster.containsKey(p)) {
-                    if (booster.get(p) > 1d) {
-                        Boosters.giveExp(p, xp, location);
-                        PlayerExperienceGainBoosterEvent playerExperienceGainBoosterEvent = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), xp, EXPSource.SOURCE);
-                        Bukkit.getPluginManager().callEvent(playerExperienceGainBoosterEvent);
+                if (MMOCore.plugin.professionManager.has(profession)) {
+                    if (booster_profession.containsKey(p.getName() + "_" + profession)) {
+                        if (booster_profession.get(p.getName() + "_" + profession) > 1d) {
+                            Boosters.giveProfessionExp(p, profession, xp, location);
+                            PlayerExperienceGainBoosterEvent playerExperienceGainBoosterEvent = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), MMOCore.plugin.professionManager.get(profession), xp, EXPSource.SOURCE);
+                            Bukkit.getPluginManager().callEvent(playerExperienceGainBoosterEvent);
+                        } else {
+                            PlayerData.get(p.getUniqueId()).getCollectionSkills().giveExperience(MMOCore.plugin.professionManager.get(profession), xp, EXPSource.SOURCE, location.add(0, 1.5, 0), true);
+                            PlayerExperienceGainBoosterEvent playerExperienceGainBoosterEvent = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), MMOCore.plugin.professionManager.get(profession), xp, EXPSource.SOURCE);
+                            Bukkit.getPluginManager().callEvent(playerExperienceGainBoosterEvent);
+                        }
                     } else {
-                        PlayerData.get(p.getUniqueId()).giveExperience(xp, EXPSource.SOURCE, location.add(0, 1.5, 0), true);
-                        PlayerExperienceGainBoosterEvent playerExperienceGainBoosterEvent = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), xp, EXPSource.SOURCE);
+                        PlayerData.get(p.getUniqueId()).getCollectionSkills().giveExperience(MMOCore.plugin.professionManager.get(profession), xp, EXPSource.SOURCE, location.add(0, 1.5, 0), true);
+                        PlayerExperienceGainBoosterEvent playerExperienceGainBoosterEvent = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), MMOCore.plugin.professionManager.get(profession), xp, EXPSource.SOURCE);
                         Bukkit.getPluginManager().callEvent(playerExperienceGainBoosterEvent);
                     }
-                } else {
-                    PlayerData.get(p.getUniqueId()).giveExperience(xp, EXPSource.SOURCE, location.add(0, 1.5, 0), true);
-                    PlayerExperienceGainBoosterEvent playerExperienceGainBoosterEvent = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), xp, EXPSource.SOURCE);
-                    Bukkit.getPluginManager().callEvent(playerExperienceGainBoosterEvent);
                 }
             }
         }

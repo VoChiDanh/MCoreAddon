@@ -11,5 +11,8 @@ public class MythicReg implements Listener {
         if (event.getDropName().equalsIgnoreCase("mca")) {
             event.register(new MythicXP(event.getConfig()));
         }
+        if (event.getDropName().equalsIgnoreCase("mcap")) {
+            event.register(new MythicProfession(event.getConfig()));
+        }
     }
 }

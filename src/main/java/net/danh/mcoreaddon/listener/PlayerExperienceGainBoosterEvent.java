@@ -6,6 +6,7 @@ import net.Indyuce.mmocore.experience.EXPSource;
 import net.Indyuce.mmocore.experience.Profession;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -25,7 +26,6 @@ public class PlayerExperienceGainBoosterEvent extends PlayerDataEvent implements
 
     public PlayerExperienceGainBoosterEvent(PlayerData player, @Nullable Profession profession, double experience, EXPSource source) {
         super(player);
-
         this.profession = profession;
         this.experience = experience;
         this.source = source;
@@ -66,7 +66,7 @@ public class PlayerExperienceGainBoosterEvent extends PlayerDataEvent implements
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return handlers;
     }
 }
