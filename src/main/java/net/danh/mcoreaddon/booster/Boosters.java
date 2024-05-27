@@ -75,4 +75,63 @@ public class Boosters {
             }
         }
     }
+    public static int getExp(Player p, int xp) {
+        if (MythicXP.booster.containsKey(p)) {
+            if (MythicXP.booster.get(p) > 1d) {
+                if (MythicXP.booster_temporary_multi.get(p) > 1d) {
+                    String booster_all_string = Objects.requireNonNull(Files.getConfig().getString("booster.mode.all"))
+                            .replace("<xp>", String.valueOf(xp))
+                            .replace("<p_multi>", String.valueOf(MythicXP.booster.get(p)))
+                            .replace("<t_multi>", String.valueOf(MythicXP.booster_temporary_multi.get(p)))
+                            .replace(",", ".");
+                    String booster_all_calculator = Calculator.calculator(booster_all_string, 0);
+                    return Math.abs((int) Double.parseDouble(booster_all_calculator));
+                } else {
+                    String booster_permanently_string = Objects.requireNonNull(Files.getConfig().getString("booster.mode.permanently"))
+                            .replace("<xp>", String.valueOf(xp))
+                            .replace("<p_multi>", String.valueOf(MythicXP.booster.get(p)))
+                            .replace(",", ".");
+                    String booster_permanently_calculator = Calculator.calculator(booster_permanently_string, 0);
+                    return Math.abs((int) Double.parseDouble(booster_permanently_calculator));
+                }
+            } else {
+                return xp;
+            }
+        } else {
+            return xp;
+        }
+    }
+
+    public static int getProfessionExp(Player p, String profession, int xp) {
+        if (MMOCore.plugin.professionManager.has(profession)) {
+            Profession prf = MMOCore.plugin.professionManager.get(profession);
+            if (prf != null) {
+                if (MythicProfession.booster_profession.containsKey(p.getName() + "_" + profession)) {
+                    if (MythicProfession.booster_profession.get(p.getName() + "_" + profession) > 1d) {
+                        if (MythicProfession.booster_temporary_multi_profession.get(p.getName() + "_" + profession) > 1d) {
+                            String booster_all_string = Objects.requireNonNull(Files.getConfig().getString("booster.mode.all"))
+                                    .replace("<xp>", String.valueOf(xp))
+                                    .replace("<p_multi>", String.valueOf(MythicProfession.booster_profession.get(p.getName() + "_" + profession)))
+                                    .replace("<t_multi>", String.valueOf(MythicProfession.booster_temporary_multi_profession.get(p.getName() + "_" + profession)))
+                                    .replace(",", ".");
+                            String booster_all_calculator = Calculator.calculator(booster_all_string, 0);
+                            return Math.abs((int) Double.parseDouble(booster_all_calculator));
+                        } else {
+                            String booster_permanently_string = Objects.requireNonNull(Files.getConfig().getString("booster.mode.permanently"))
+                                    .replace("<xp>", String.valueOf(xp))
+                                    .replace("<p_multi>", String.valueOf(MythicProfession.booster_profession.get(p.getName() + "_" + profession)))
+                                    .replace(",", ".");
+                            String booster_permanently_calculator = Calculator.calculator(booster_permanently_string, 0);
+                            return Math.abs((int) Double.parseDouble(booster_permanently_calculator));
+                        }
+                    } else {
+                        return xp;
+                    }
+                } else {
+                    return xp;
+                }
+            }
+        }
+        return xp;
+    }
 }

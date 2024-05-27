@@ -1,6 +1,7 @@
 package net.danh.mcoreaddon;
 
 import net.danh.mcoreaddon.cmd.MCA_CMD;
+import net.danh.mcoreaddon.events.GainEXP;
 import net.danh.mcoreaddon.events.JoinQuit;
 import net.danh.mcoreaddon.mythicdrop.MythicReg;
 import net.danh.mcoreaddon.playerData.PlayerData;
@@ -25,7 +26,7 @@ public final class MCoreAddon extends JavaPlugin {
     public void onEnable() {
         mCoreAddon = this;
         SimpleConfigurationManager.register(mCoreAddon);
-        registerEvents(new JoinQuit(), new MythicReg());
+        registerEvents(new JoinQuit(), new MythicReg(), new GainEXP());
         Files.createFiles();
         new MCA_CMD();
     }
