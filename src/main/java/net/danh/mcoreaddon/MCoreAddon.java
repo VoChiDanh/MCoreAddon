@@ -6,6 +6,7 @@ import net.danh.mcoreaddon.events.JoinQuit;
 import net.danh.mcoreaddon.mythicdrop.MythicReg;
 import net.danh.mcoreaddon.playerData.PlayerData;
 import net.danh.mcoreaddon.utils.Files;
+import net.danh.mcoreaddon.utils.LicenseKey;
 import net.xconfig.bukkit.model.SimpleConfigurationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -26,8 +27,12 @@ public final class MCoreAddon extends JavaPlugin {
     public void onEnable() {
         mCoreAddon = this;
         SimpleConfigurationManager.register(mCoreAddon);
-        registerEvents(new JoinQuit(), new MythicReg(), new GainEXP());
         Files.createFiles();
+        if (!LicenseKey.checkKey()) {
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+        registerEvents(new JoinQuit(), new MythicReg(), new GainEXP());
         new MCA_CMD();
     }
 
