@@ -65,7 +65,9 @@ public class LicenseKey {
                     return true;
                 } else {
                     MCoreAddon.getMCore().getLogger().warning("Invalid license key - Verification failed");
-                    MCoreAddon.getMCore().getLogger().warning("Join Discord to get License Key: https://discord.gg/2G7TarwWAV");
+                    MCoreAddon.getMCore().getLogger().warning("Join Discord to get License Key: https://discord.gg/r5ejaPSjku");
+                    //WorkSpace https://discord.gg/r5ejaPSjku
+                    //Stella https://discord.gg/2G7TarwWAV
                     return false;
                 }
             } else {
