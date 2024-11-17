@@ -49,6 +49,7 @@ public class Boosters {
             }
         }
     }
+
     public static int getExp(Player p, int xp) {
         if (MythicXP.booster.containsKey(p)) {
             if (MythicXP.booster.get(p) > 1d) {

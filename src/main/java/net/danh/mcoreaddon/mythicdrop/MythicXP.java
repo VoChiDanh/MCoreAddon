@@ -8,14 +8,17 @@ import io.lumine.mythic.api.drops.ILocationDrop;
 import io.lumine.mythic.api.skills.SkillCaster;
 import net.Indyuce.mmocore.api.player.PlayerData;
 import net.Indyuce.mmocore.experience.EXPSource;
+import net.danh.mcoreaddon.api.calculator.Calculator;
 import net.danh.mcoreaddon.booster.Boosters;
 import net.danh.mcoreaddon.listener.PlayerExperienceGainBoosterEvent;
+import net.danh.mcoreaddon.utils.Files;
 import net.danh.mcoreaddon.utils.Number;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Optional;
 
 public class MythicXP implements ILocationDrop {
@@ -31,22 +34,29 @@ public class MythicXP implements ILocationDrop {
         range = config.getString(new String[]{"range", "r"}, null);
     }
 
-    public void exp(Player p, Location location) {
-        if (xp > 0) {
+    public void exp(Player p, Location location, int mob_level) {
+        int player_level = PlayerData.get(p).getLevel();
+        String exp_formula = Objects.requireNonNull(Files.getConfig().getString("exp.mode.per_level"))
+                .replace("<xp>", String.valueOf(xp))
+                .replace("<mob_level>", String.valueOf(mob_level))
+                .replace("<player_level>", String.valueOf(player_level));
+        String exp_all_calculator = Calculator.calculator(exp_formula, 0);
+        int exp = (int) Double.parseDouble(exp_all_calculator);
+        if (exp > 0) {
             if (rangeCheck(p)) {
                 if (booster.containsKey(p)) {
                     if (booster.get(p) > 1d) {
-                        Boosters.giveExp(p, xp, location);
-                        PlayerExperienceGainBoosterEvent playerExperienceGainBoosterEvent = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), xp, EXPSource.SOURCE);
+                        Boosters.giveExp(p, exp, location);
+                        PlayerExperienceGainBoosterEvent playerExperienceGainBoosterEvent = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), exp, EXPSource.SOURCE);
                         Bukkit.getPluginManager().callEvent(playerExperienceGainBoosterEvent);
                     } else {
-                        PlayerData.get(p.getUniqueId()).giveExperience(xp, EXPSource.SOURCE, location.add(0, 1.5, 0), true);
-                        PlayerExperienceGainBoosterEvent playerExperienceGainBoosterEvent = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), xp, EXPSource.SOURCE);
+                        PlayerData.get(p.getUniqueId()).giveExperience(exp, EXPSource.SOURCE, location.add(0, 1.5, 0), true);
+                        PlayerExperienceGainBoosterEvent playerExperienceGainBoosterEvent = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), exp, EXPSource.SOURCE);
                         Bukkit.getPluginManager().callEvent(playerExperienceGainBoosterEvent);
                     }
                 } else {
-                    PlayerData.get(p.getUniqueId()).giveExperience(xp, EXPSource.SOURCE, location.add(0, 1.5, 0), true);
-                    PlayerExperienceGainBoosterEvent playerExperienceGainBoosterEvent = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), xp, EXPSource.SOURCE);
+                    PlayerData.get(p.getUniqueId()).giveExperience(exp, EXPSource.SOURCE, location.add(0, 1.5, 0), true);
+                    PlayerExperienceGainBoosterEvent playerExperienceGainBoosterEvent = new PlayerExperienceGainBoosterEvent(PlayerData.get(p.getUniqueId()), exp, EXPSource.SOURCE);
                     Bukkit.getPluginManager().callEvent(playerExperienceGainBoosterEvent);
                 }
             }
@@ -86,9 +96,10 @@ public class MythicXP implements ILocationDrop {
         Optional<SkillCaster> skillCaster = dropMetadata.getDropper();
         if (abstractEntity.isPresent() && skillCaster.isPresent()) {
             Player p = Bukkit.getPlayer(abstractEntity.get().getName());
+            int mob_level = (int) skillCaster.get().getLevel();
             Location location = new Location(Bukkit.getWorld(skillCaster.get().getLocation().getWorld().getName()), skillCaster.get().getLocation().getBlockX(), skillCaster.get().getLocation().getBlockY(), skillCaster.get().getLocation().getBlockZ());
             if (p != null) {
-                exp(p, location);
+                exp(p, location, mob_level);
             }
         }
     }
